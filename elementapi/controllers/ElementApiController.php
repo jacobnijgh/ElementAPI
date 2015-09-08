@@ -49,6 +49,14 @@ class ElementApiController extends BaseController
 			$config
 		);
 
+		//If Cache is set and a cache file is found, bail.
+		if($config['cache'] && craft()->cache->get($params['template']))
+		{
+			JsonHelper::sendJsonHeaders();
+			echo craft()->cache->get($params['template']);
+			craft()->end();
+		}
+
 		if ($config['pageParam'] == 'p')
 		{
 			throw new Exception('The pageParam setting cannot be set to "p" because that’s the parameter Craft uses to check the requested path.');
@@ -118,7 +126,15 @@ class ElementApiController extends BaseController
 		}
 
 		JsonHelper::sendJsonHeaders();
-		echo $fractal->createData($resource)->toJson();
+
+		$JsonValue = $fractal->createData($resource)->toJson();
+		echo $JsonValue;
+
+		// Cache the response
+		if($config['cache'])
+		{
+			craft()->cache->set($params['template'], $JsonValue, $config['cacheTime']);	
+		}
 
 		// End the request
 		craft()->end();
