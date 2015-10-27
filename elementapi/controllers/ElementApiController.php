@@ -33,6 +33,7 @@ class ElementApiController extends BaseController
 		{
 			$params = craft()->urlManager->getRouteParams();
 			$variables = (isset($params['variables']) ? $params['variables'] : null);
+			$template = (isset($params['template']) ? $params['template'] : null);
 			$config = $this->_callWithParams($configFactory, $variables);
 		}
 
@@ -50,10 +51,10 @@ class ElementApiController extends BaseController
 		);
 
 		//If Cache is set and a cache file is found, bail.
-		if($config['cache'] && craft()->cache->get($params['template']))
+		if($config['cache'] && craft()->cache->get($template))
 		{
 			JsonHelper::sendJsonHeaders();
-			echo craft()->cache->get($params['template']);
+			echo craft()->cache->get($template);
 			craft()->end();
 		}
 
@@ -133,7 +134,7 @@ class ElementApiController extends BaseController
 		// Cache the response
 		if($config['cache'])
 		{
-			craft()->cache->set($params['template'], $JsonValue, $config['cacheTime']);	
+			craft()->cache->set($params['template'], $JsonValue, $config['cacheTime']);
 		}
 
 		// End the request
