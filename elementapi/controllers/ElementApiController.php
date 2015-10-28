@@ -29,11 +29,12 @@ class ElementApiController extends BaseController
 	 */
 	public function actionGetElements($configFactory = null, array $config = null)
 	{
+        $params = craft()->urlManager->getRouteParams();
+        $template = (isset($params['template']) ? $params['template'] : null);
+
 		if ($configFactory !== null)
 		{
-			$params = craft()->urlManager->getRouteParams();
 			$variables = (isset($params['variables']) ? $params['variables'] : null);
-			$template = (isset($params['template']) ? $params['template'] : null);
 			$config = $this->_callWithParams($configFactory, $variables);
 		}
 
@@ -134,7 +135,7 @@ class ElementApiController extends BaseController
 		// Cache the response
 		if($config['cache'])
 		{
-			craft()->cache->set($params['template'], $JsonValue, $config['cacheTime']);
+			craft()->cache->set($template, $JsonValue, $config['cacheTime']);
 		}
 
 		// End the request
