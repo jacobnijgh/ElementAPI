@@ -30,7 +30,6 @@ class ElementApiController extends BaseController
 	public function actionGetElements($configFactory = null, array $config = null)
 	{
         $params = craft()->urlManager->getRouteParams();
-        $template = (isset($params['template']) ? $params['template'] : null);
 
 		if ($configFactory !== null)
 		{
@@ -41,6 +40,8 @@ class ElementApiController extends BaseController
 		// Merge in default config options
 		$config = array_merge(
 			[
+				'cache' => craft()->config->get('enableTemplateCaching'),
+				'cacheTime' => craft()->config->get('cacheDuration'),
 				'paginate' => true,
 				'pageParam' => 'page',
 				'elementsPerPage' => 100,
@@ -50,6 +51,10 @@ class ElementApiController extends BaseController
 			craft()->config->get('defaults', 'elementapi'),
 			$config
 		);
+
+		// find out if a page param is set and cache the specific page
+		$pageParam = craft()->request->getQuery($config['pageParam']);
+        $template = (isset($params['template']) ? $params['template'].'?'.$config['pageParam'].'='.$pageParam : null);
 
 		//If Cache is set and a cache file is found, bail.
 		if($config['cache'] && craft()->cache->get($template))
