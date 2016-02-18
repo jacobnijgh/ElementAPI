@@ -54,7 +54,7 @@ class ElementApiController extends BaseController
 
 		// find out if a page param is set and cache the specific page
 		$pageParam = craft()->request->getQuery($config['pageParam']);
-        $template = (isset($params['template']) ? $params['template'].'?'.$config['pageParam'].'='.$pageParam : null);
+		$template = (isset($params['template']) ? $params['template'].'?'.$config['pageParam'].'='.$pageParam : null);
 
 		//If Cache is set and a cache file is found, bail.
 		if($config['cache'] && craft()->cache->get($template))
